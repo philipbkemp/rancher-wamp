@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  pbknet22-db:
+    image: mysql:8.0
+    container_name: pbknet22-db_1
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - .:/application
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - 8922:3306
+  pbknet22-web:
+    build: ./docker
+    depends_on:
+      - pbknet22-db
+    ports:
+      - 8921:80
+    volumes:
+      - ./www:/var/www/html/
+  pbknet22-db-admin:
+    depends_on:
+      - pbknet22-db
+    image: phpmyadmin/phpmyadmin
+    container_name: pbknet22-db-admin_1
+    ports:
+      - 8923:80
+    environment:
+      PMA_HOST: pbknet22-db
